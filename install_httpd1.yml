@@ -1,0 +1,32 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: install httpd package
+    yum: 
+     name: httpd
+  
+  - name: Start service httpd, if not started
+    ansible.builtin.service:
+      name: httpd
+      state: started
+  
+  - name: allow http traffic on local firewall
+    ansible.posix.firewalld:
+      zone: dmz
+      service: http
+      permanent: true
+      state: enabled
+  
+  - name: restart firewall service
+    ansible.builtin.service:
+      name: firewalld
+      state: restarted
+
+  - name: iptables rule to allow http traffic to the web server
+    command: iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+
+
+

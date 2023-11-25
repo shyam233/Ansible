@@ -7,11 +7,13 @@
   - name: install httpd package
     yum: 
      name: httpd
-  
+    when: ansible_distribution == "CentOS"
+ 
   - name: Start service httpd, if not started
     ansible.builtin.service:
       name: httpd
       state: started
+    when: ansible_distribution == "CentOS"
   
   - name: allow http traffic on local firewall
     ansible.posix.firewalld:
@@ -19,14 +21,20 @@
       service: http
       permanent: true
       state: enabled
+    when: ansible_distribution == "CentOS"
   
   - name: restart firewall service
     ansible.builtin.service:
       name: firewalld
       state: restarted
+    when: ansible_distribution == "CentOS"
 
   - name: iptables rule to allow http traffic to the web server
     command: iptables -I INPUT -p tcp --dport 80 -j ACCEPT
-
-
-
+    when: ansible_distribution == "CentOS"
+  
+  - name: install apache2 on new ubuntu
+    apt:
+      name: apache2
+      state: latest
+    when: ansible_distribution == "Ubuntu"

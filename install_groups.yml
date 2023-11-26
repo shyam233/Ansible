@@ -1,0 +1,29 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: install httpd and start package
+    yum: 
+     name: httpd
+     state: latest
+    when: ansible_distribution == "CentOS"
+ 
+  - name: allow http traffic on local firewall and adding IPtable rule
+    ansible.posix.firewalld:
+      zone: dmz
+      service: http
+      permanent: true
+      state: enabled
+    when: ansible_distribution == "CentOS"
+  
+  - name: command to add IPtables rule
+    command: iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+    when: ansible_distribution == "CentOS"
+  
+  - name: install apache2 on new ubuntu
+    apt:
+      name: apache2
+      state: latest
+    when: ansible_distribution == "Ubuntu"

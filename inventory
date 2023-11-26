@@ -1,5 +1,8 @@
+[CentOS_servers]
 192.168.1.147
 192.168.1.149
+
+[Ubuntur_servers]
 192.168.1.152
 
 
